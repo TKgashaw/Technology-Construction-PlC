@@ -1,0 +1,530 @@
+<!--
+Filename: manufacturing_website.html
+Description: Single-file demo website for a manufacturing company using blue, orange, and gray colors.
+Instructions: Save this file as `index.html`. Create folders: /assets/images/ (product images, gallery), /assets/brochures/ (PDFs) and drop your images and PDF brochures there. Update the CONTACT_EMAIL and WHATSAPP_NUMBER constants in the <script> section.
+
+Features included:
+- Responsive modern UI with animated hero
+- Product grid with lightbox modal and image carousel
+- Brochures & flyers downloadable cards
+- Gallery (masonry-like) and slideshow preview
+- Multi-step ordering modal (sends via Formspree and provides WhatsApp quick-order link)
+- Animated social buttons (sticky + footer)
+- Smooth scroll, subtle motions, accessible markup
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manufacturing Co. — Modern Website</title>
+  <meta name="description" content="Modern manufacturing company website demo. Blue, orange, gray theme. Includes product catalog, brochures, gallery, order form." />
+
+  <!-- Google font (system fallback included) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --blue: #0b66d0; /* primary */
+      --orange: #ff8c3a; /* accent */
+      --gray-100: #f5f7fa;
+      --gray-200: #e5e7eb;
+      --gray-600: #6b7280;
+      --bg: #ffffff;
+      --card-radius: 14px;
+      --shadow: 0 8px 30px rgba(11,102,208,0.08);
+      --glass: rgba(255,255,255,0.6);
+      --max-width: 1200px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:#111827;
+      background: linear-gradient(180deg, var(--gray-100) 0%, var(--bg) 60%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    a{color:inherit}
+
+    /* Layout container */
+    .container{max-width:var(--max-width);margin:0 auto;padding:28px}
+
+    /* Header */
+    header{position:sticky;top:0;z-index:80;background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));backdrop-filter: blur(6px);border-bottom:1px solid rgba(15,23,42,0.03)}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--orange));box-shadow:var(--shadow);display:grid;place-items:center;color:white;font-weight:700}
+    nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0}
+    nav a{padding:8px 12px;border-radius:10px;font-weight:600;color:var(--gray-600);text-decoration:none}
+    nav a:hover{color:var(--blue);background:rgba(11,102,208,0.04)}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 480px;gap:28px;align-items:center;padding:48px 0}
+    .hero-card{background:linear-gradient(135deg, rgba(11,102,208,0.06), rgba(255,140,58,0.03));padding:36px;border-radius:18px;box-shadow:var(--shadow)}
+    .eyebrow{display:inline-block;color:var(--orange);font-weight:700;padding:6px 12px;border-radius:999px;background:rgba(255,140,58,0.06);margin-bottom:12px}
+    h1{font-size:36px;margin:0 0 14px 0;line-height:1.05}
+    p.lead{margin:0 0 20px 0;color:var(--gray-600)}
+    .cta-row{display:flex;gap:12px;align-items:center}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;border:0;cursor:pointer;font-weight:700}
+    .btn-primary{background:linear-gradient(90deg,var(--blue),#1170e0);color:white;box-shadow:0 8px 30px rgba(11,102,208,0.12);transition:transform .18s ease}
+    .btn-primary:hover{transform:translateY(-3px);filter:brightness(1.03)}
+    .btn-ghost{background:transparent;border:2px solid rgba(15,23,42,0.06);color:var(--gray-700)}
+
+    /* animated shapes */
+    .hero-visual{position:relative;border-radius:18px;padding:12px;background:linear-gradient(180deg,rgba(255,255,255,0.4),rgba(255,255,255,0.2));box-shadow:var(--shadow)}
+    .hero-visual img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+    .shape{position:absolute;border-radius:12px;mix-blend-mode:screen;opacity:0.95}
+    .shape.s1{width:120px;height:120px;background:linear-gradient(135deg,var(--orange),#ffd6b8);top:-18px;left:-18px;transform:rotate(12deg);animation:float 6s ease-in-out infinite}
+    .shape.s2{width:80px;height:80px;background:linear-gradient(135deg,var(--blue),#8fc7ff);bottom:-18px;right:-18px;animation:float 5s linear infinite}
+    @keyframes float{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(8deg)}100%{transform:translateY(0) rotate(0)}}
+
+    /* Product grid */
+    .section{padding:48px 0}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .card{background:white;border-radius:12px;padding:12px;box-shadow:0 6px 20px rgba(15,23,42,0.05);transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(11,102,208,0.08)}
+    .product-image{width:100%;height:200px;border-radius:8px;object-fit:cover}
+    .product-meta{display:flex;justify-content:space-between;align-items:center;padding-top:10px}
+    .price{font-weight:800;color:var(--blue)}
+    .tag{background:rgba(11,102,208,0.06);color:var(--blue);padding:6px 8px;border-radius:8px;font-weight:700}
+
+    /* Brochures*/
+    .brochures{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .brochure-card{padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.8),#fff);box-shadow:0 8px 30px rgba(0,0,0,0.04);display:flex;gap:12px;align-items:center}
+    .brochure-thumb{width:92px;height:92px;border-radius:8px;object-fit:cover}
+    .download-btn{padding:10px 12px;border-radius:10px;border:0;background:var(--orange);color:white;font-weight:700}
+
+    /* Gallery */
+    .masonry{column-count:3;column-gap:12px}
+    .masonry img{width:100%;margin-bottom:12px;border-radius:10px}
+
+    /* Footer */
+    footer{padding:28px 0;background:linear-gradient(180deg, #fff, var(--gray-100));border-top:1px solid rgba(15,23,42,0.03)}
+    .footer-grid{display:flex;justify-content:space-between;gap:12px;align-items:center}
+
+    /* Social sticky */
+    .social-sticky{position:fixed;right:18px;bottom:120px;display:flex;flex-direction:column;gap:12px;z-index:90}
+    .social-btn{width:52px;height:52px;border-radius:999px;display:grid;place-items:center;color:white;font-weight:700;box-shadow:0 8px 24px rgba(15,23,42,0.08);cursor:pointer}
+    .social-btn.whatsapp{background:linear-gradient(180deg,#25D366,#128C7E)}
+    .social-btn.telegram{background:linear-gradient(180deg,#2AABEE,#0088CC)}
+    .social-btn.facebook{background:linear-gradient(180deg,#4267B2,#27408B)}
+
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(3,7,18,0.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:200}
+    .modal{background:white;border-radius:12px;max-width:920px;width:100%;max-height:90vh;overflow:auto;padding:20px}
+    .modal.show{display:flex}
+
+    /* Responsive */
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr 360px}}
+    @media (max-width:880px){.grid{grid-template-columns:repeat(2,1fr)}.masonry{column-count:2}.hero{grid-template-columns:1fr}.hero-visual{order:-1}}
+    @media (max-width:560px){.grid{grid-template-columns:1fr}.masonry{column-count:1}.nav ul{display:none}}
+
+    /* small helpers */
+    .muted{color:var(--gray-600)}
+    .center{display:grid;place-items:center}
+    .space{height:18px}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(11,102,208,0.06);font-weight:700;color:var(--blue)}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="logo">TC</div>
+      <div>
+        <div style="font-weight:800">Technology Construction PlC </div>
+        <div style="font-size:12px;color:var(--gray-600)">Quality • Innovation • Ethiopia</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#brochures">Brochures</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><button class="btn btn-primary" id="openOrderBtn">Order Now</button></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container" id="home">
+  <section class="hero">
+    <div class="hero-card">
+      <div class="eyebrow">New • Made in Ethiopia</div>
+      <h1>Industrial-grade materials with European technology made in Ethiopia</h1>
+      <p class="lead">We manufacture high-performance adhesives, plastering materials, and industrial products built for durability and sustainability. Explore our catalog, download brochures, or place an order.</p>
+
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Explore Products</button>
+        <button class="btn btn-ghost" onclick="openOrderModal()">Quick Order</button>
+      </div>
+
+      <div class="space"></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="pill">ISO Certified</div>
+        <div class="muted">•</div>
+        <div class="muted">Factory Tours Available</div>
+      </div>
+    </div>
+
+    <div class="hero-visual center" aria-hidden="true">
+      <div class="shape s1"></div>
+      <div class="shape s2"></div>
+      <img src="assets/images/hero-product.jpg" alt="Factory & products" onerror="this.src='https://via.placeholder.com/480x360?text=Hero+Image'" />
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section class="section" id="products">
+    <div class="section-title">
+      <h3>Our Products</h3>
+      <div class="muted">High-performance construction materials & industrial adhesives</div>
+    </div>
+
+    <div class="grid" id="productGrid">
+      <!-- JavaScript will inject product cards here -->
+    </div>
+  </section>
+
+  <!-- Brochures -->
+  <section class="section" id="brochures">
+    <div class="section-title">
+      <h3>Brochures & Flyers</h3>
+      <div class="muted">Download catalogs, technical datasheets and flyers</div>
+    </div>
+
+    <div class="brochures" id="brochureList">
+      <!-- JS injected brochure cards -->
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="section" id="gallery">
+    <div class="section-title">
+      <h3>Gallery</h3>
+      <div class="muted">Factory, products, packaging, and events</div>
+    </div>
+    <div class="masonry" id="galleryMasonry">
+      <!-- JS will inject gallery images -->
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section" id="contact">
+    <div class="section-title">
+      <h3>Contact Us</h3>
+      <div class="muted">Questions? Orders? Reach out directly.</div>
+    </div>
+
+    <div style="display:flex;gap:18px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div class="card">
+          <h4>Get in touch</h4>
+          <p class="muted">Address: Addis Ababa, Akaki Kality, woreda 12 behind Taxi station</p>
+          <p class="muted">Phone: +251 975822222/0912672667</p>
+          <p class="muted">Email: <span id="contactEmail">technologyconstructionplc@gmail.com</span></p>
+          <div style="height:12px"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a class="social-link" href="https://www.facebook.com/share/1Azd18kZ5L/" aria-label="Facebook">Facebook</a>
+            <a class="social-link" href="#" aria-label="Instagram">Instagram</a>
+            <a class="social-link" href="https://www.linkedin.com/company/technology-construction-plc/" aria-label="LinkedIn">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:320px">
+        <div class="card">
+          <h4>Send a message</h4>
+          <form id="contactForm" action="https://formspree.io/f/mblavqvz" method="POST">
+            <label>
+              <div style="font-weight:700">Name</div>
+              <input name="name" required style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid var(--gray-200)" />
+            </label>
+            <div style="height:8px"></div>
+            <label>
+              <div style="font-weight:700">Email</div>
+              <input name="email" type="email" required style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid var(--gray-200)" />
+            </label>
+            <div style="height:8px"></div>
+            <label>
+              <div style="font-weight:700">Message</div>
+              <textarea name="message" rows="4" required style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid var(--gray-200)"></textarea>
+            </label>
+            <div style="height:8px"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" type="submit">Send</button>
+              <button type="button" class="btn btn-ghost" onclick="openOrderModal()">Order Now</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div>© <strong>Technology Construction PlC</strong> — All rights reserved</div>
+    <div class="muted">Technology Construction PlC</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a class="social-link" href="https://www.facebook.com/share/1Azd18kZ5L/">Facebook</a>
+      <a class="social-link" href="#">Instagram</a>
+      <a class="social-link" href="https://www.linkedin.com/company/technology-construction-plc/">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Sticky social icons -->
+<div class="social-sticky" aria-hidden="false">
+  <div class="social-btn whatsapp" title="WhatsApp" onclick="openWhatsApp()">WA</div>
+  <div class="social-btn telegram" title="Telegram" onclick="window.open('https://t.me/yourtelegram','_blank')">TG</div>
+  <div class="social-btn facebook" title="Facebook" onclick="window.open('https://facebook.com/yourpage','_blank')">f</div>
+</div>
+
+<!-- Modal backdrop (used for product lightbox & order form) -->
+<div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" tabindex="-1">
+  <div class="modal" id="modalContent">
+    <!-- JS injects content here -->
+  </div>
+</div>
+
+<script>
+/* ===================
+   Configuration
+   =================== */
+const CONTACT_EMAIL = 'technologyconstructionplc@gmail.com';
+const WHATSAPP_NUMBER = '+251975822222'; // include country code
+const FORMSPREE_ID = 'https://formspree.io/f/mblavqvz'; // replace with your Formspree form ID for contact/order POSTs
+
+// sample product data (replace image filenames with your images in assets/images/)
+const PRODUCTS = [
+  {id:1, title:'Smart Adhesive - 25kg', price:'ETB 450.00', tag:'Adhesive', images:['assets/images/prod1-1.jpg','assets/images/prod1-2.jpg'], desc:'High strength adhesive for heavy duty construction.'},
+  {id:2, title:'Smart Plaster - 25kg', price:'ETB 450.00', tag:'Plaster', images:['assets/images/prod2-1.jpg','assets/images/prod2-2.jpg'], desc:'Durable, smooth finish plaster.'},
+  {id:3, title:'Smart Adhesive - 25kg', price:'ETB 450.00', tag:'Adhesive', images:['assets/images/prod3-1.jpg'], desc:'High strength adhesive for heavy duty construction.'},
+  {id:4, title:'Smart Plaster - 25kg', price:'ETB 450.00', tag:'Plaster', images:['assets/images/prod4-1.jpg'], desc:'Durable, smooth finish plaster.'},
+  {id:5, title:'Smart Adhesive - 25kg', price:'ETB 450.00', tag:'Adhesive', images:['assets/images/prod5-1.jpg'], desc:'High strength adhesive for heavy duty construction.'},
+  {id:6, title:'Smart Plaster - 25kg', price:'ETB 450.00', tag:'Plaster', images:['assets/images/prod6-1.jpg'], desc:'Durable, smooth finish plaster.'},
+  {id:7, title:'Smart Adhesive - 25kg', price:'ETB 450.00', tag:'Adhesive', images:['assets/images/prod7-1.jpg'], desc:'High strength adhesive for heavy duty construction.'},
+  {id:8, title:'Smart Plaster - 25kg', price:'ETB 450.00', tag:'Plaster', images:['assets/images/prod8-1.jpg'], desc:'Durable, smooth finish plaster.'}
+];
+
+const BROCHURES = [
+  {id:'b1', title:'Full Product Catalog', file:'assets/brochures/catalog.pdf', thumb:'assets/images/broch1.jpg'},
+  {id:'b2', title:'Company Profile', file:'assets/brochures/datasheets.pdf', thumb:'assets/images/broch2.jpg'},
+  {id:'b3', title:'Company Flyer', file:'assets/brochures/flyer.pdf', thumb:'assets/images/broch3.jpg'}
+];
+
+const GALLERY = [
+  'assets/images/gallery1.jpg','assets/images/gallery2.jpg','assets/images/gallery3.jpg','assets/images/gallery4.jpg','assets/images/gallery5.jpg','assets/images/gallery6.jpg'
+];
+
+/* ===================
+   UI Rendering
+   =================== */
+function renderProducts(){
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML='';
+  PRODUCTS.forEach(p=>{
+    const div=document.createElement('div');div.className='card';
+    div.innerHTML = `
+      <img class="product-image" src="${p.images[0]}" alt="${p.title}" onerror="this.src='https://via.placeholder.com/400x300?text=Product'" />
+      <div style='padding-top:8px'>
+        <div style='display:flex;justify-content:space-between;align-items:center'>
+          <div style='font-weight:700'>${p.title}</div>
+          <div class='tag'>${p.tag}</div>
+        </div>
+        <div class='product-meta'>
+          <div class='muted'>${p.desc.slice(0,60)}...</div>
+          <div class='price'>${p.price}</div>
+        </div>
+        <div style='height:10px'></div>
+        <div style='display:flex;gap:8px'>
+          <button class='btn btn-primary' onclick='openProductModal(${p.id})'>View</button>
+          <button class='btn btn-ghost' onclick='quickOrder(${p.id})'>Order</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function renderBrochures(){
+  const list=document.getElementById('brochureList');list.innerHTML='';
+  BROCHURES.forEach(b=>{
+    const d=document.createElement('div');d.className='brochure-card';
+    d.innerHTML=`
+      <img class='brochure-thumb' src='${b.thumb}' onerror="this.src='https://via.placeholder.com/92x92?text=PDF'" alt='${b.title}'/>
+      <div style='flex:1'>
+        <div style='font-weight:800'>${b.title}</div>
+        <div class='muted' style='font-size:13px;margin-top:6px'>PDF • Download & print</div>
+      </div>
+      <div>
+        <a class='download-btn' href='${b.file}' download>Download</a>
+      </div>
+    `;
+    list.appendChild(d);
+  });
+}
+
+function renderGallery(){
+  const g=document.getElementById('galleryMasonry');g.innerHTML='';
+  GALLERY.forEach(src=>{
+    const img=document.createElement('img');img.src=src;img.alt='gallery';img.onerror=function(){this.src='https://via.placeholder.com/400x300?text=Gallery'};img.onclick=()=>openLightbox(src);
+    g.appendChild(img);
+  });
+}
+
+/* ===================
+   Modal / Lightbox
+   =================== */
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalContent = document.getElementById('modalContent');
+
+function openModal(html){
+  modalContent.innerHTML = html;
+  modalBackdrop.style.display = 'flex';
+  setTimeout(()=>modalBackdrop.classList.add('show'),50);
+}
+function closeModal(){
+  modalBackdrop.style.display = 'none';
+  modalBackdrop.classList.remove('show');
+  modalContent.innerHTML='';
+}
+modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) closeModal(); });
+
+function openLightbox(src){
+  openModal(`<div style='display:grid;gap:12px'><img src='${src}' style='max-width:100%;border-radius:10px' onerror="this.src='https://via.placeholder.com/800x600?text=Image'"/><div style='display:flex;gap:8px;justify-content:flex-end'><button class='btn btn-ghost' onclick='closeModal()'>Close</button></div></div>`);
+}
+
+function openProductModal(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  const imagesHtml = p.images.map((src,idx)=>`<img src='${src}' style='max-width:100%;margin-bottom:10px;border-radius:8px' onerror="this.src='https://via.placeholder.com/800x600?text=Image'" />`).join('');
+  const html = `
+    <div style='display:flex;gap:18px;flex-direction:column'>
+      <div style='display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap'>
+        <div style='flex:1;min-width:280px'>${imagesHtml}</div>
+        <div style='width:320px'>
+          <h2 style='margin-top:0'>${p.title}</h2>
+          <div class='muted'>${p.desc}</div>
+          <div style='height:8px'></div>
+          <div style='font-size:20px;font-weight:800;color:var(--blue)'>${p.price}</div>
+          <div style='height:12px'></div>
+          <div style='display:flex;gap:8px'>
+            <button class='btn btn-primary' onclick='quickOrder(${p.id})'>Order This</button>
+            <button class='btn btn-ghost' onclick='closeModal()'>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  openModal(html);
+}
+
+/* ===================
+   Ordering flow
+   =================== */
+function quickOrder(productId){
+  const p = PRODUCTS.find(x=>x.id===productId);
+  openOrderModal(p);
+}
+
+function openOrderModal(prefProduct){
+  const productOptions = PRODUCTS.map(p=>`<option value='${p.title}'>${p.title} — ${p.price}</option>`).join('');
+  const pre = prefProduct?`value='${prefProduct.title}'`:'';
+  const html = `
+    <div>
+      <h2>Place an Order</h2>
+      <form id='orderForm'>
+        <label style='display:block;font-weight:700;margin-top:8px'>Full name</label>
+        <input name='name' required style='width:100%;padding:10px;border-radius:8px;border:1px solid var(--gray-200)' />
+
+        <label style='display:block;font-weight:700;margin-top:8px'>Email</label>
+        <input name='email' type='email' required style='width:100%;padding:10px;border-radius:8px;border:1px solid var(--gray-200)' />
+
+        <label style='display:block;font-weight:700;margin-top:8px'>Product</label>
+        <select name='product' required style='width:100%;padding:10px;border-radius:8px;border:1px solid var(--gray-200)'>
+          <option value=''>Select product</option>
+          ${productOptions}
+        </select>
+
+        <label style='display:block;font-weight:700;margin-top:8px'>Quantity</label>
+        <input name='quantity' type='number' min='1' value='1' required style='width:120px;padding:10px;border-radius:8px;border:1px solid var(--gray-200)' />
+
+        <label style='display:block;font-weight:700;margin-top:8px'>Delivery Address</label>
+        <textarea name='address' rows='3' required style='width:100%;padding:10px;border-radius:8px;border:1px solid var(--gray-200)'></textarea>
+
+        <div style='display:flex;gap:8px;margin-top:12px'>
+          <button class='btn btn-primary' type='button' onclick='submitOrder()'>Submit Order</button>
+          <button class='btn btn-ghost' type='button' onclick='orderViaWhatsApp()'>Order via WhatsApp</button>
+          <button class='btn btn-ghost' type='button' onclick='closeModal()'>Close</button>
+        </div>
+      </form>
+    </div>
+  `;
+  openModal(html);
+  // preselect if prefProduct provided
+  if(prefProduct){ setTimeout(()=>{ const sel=modalContent.querySelector('select[name="product"]'); if(sel) sel.value = prefProduct.title },80)}
+}
+
+function submitOrder(){
+  const form = modalContent.querySelector('#orderForm');
+  if(!form) return;
+  const data = new FormData(form);
+  // Send to Formspree (replace your FORMSPREE_ID above)
+  fetch(`https://formspree.io/f/mblavqvz ${FORMSPREE_ID}`,{
+    method:'POST',headers: {'Accept':'application/json'},body:data
+  }).then(res=>{
+    if(res.ok){ alert('Order submitted successfully. We will contact you soon.'); closeModal(); } else { alert('Failed to submit order. Please try WhatsApp at the bottom-right.'); }
+  }).catch(err=>{ alert('Network error. Try ordering via WhatsApp as an alternative.'); });
+}
+
+function orderViaWhatsApp(){
+  const form = modalContent.querySelector('#orderForm');
+  if(!form) return;
+  const name = form.querySelector('[name="name"]').value || 'Customer';
+  const email = form.querySelector('[name="email"]').value || '';
+  const product = form.querySelector('[name="product"]').value || '';
+  const qty = form.querySelector('[name="quantity"]').value || 1;
+  const address = form.querySelector('[name="address"]').value || '';
+  const txt = encodeURIComponent(`Order from ${name}\nEmail: ${email}\nProduct: ${product}\nQuantity: ${qty}\nAddress: ${address}`);
+  const url = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g,'')}?text=${txt}`;
+  window.open(url,'_blank');
+}
+
+/* ===================
+   Utilities & Init
+   =================== */
+function openWhatsApp(){
+  const url = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g,'')}`;
+  window.open(url,'_blank');
+}
+
+function init(){
+  document.getElementById('contactEmail').textContent = CONTACT_EMAIL;
+  document.querySelectorAll('.social-link').forEach(a=>{ a.style.color='var(--blue)'; a.style.textDecoration='none'; a.style.fontWeight='700' });
+  renderProducts(); renderBrochures(); renderGallery();
+  // smooth scroll for nav anchors
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{ a.addEventListener('click',(e)=>{ e.preventDefault(); const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'}); }); });
+  // open order btn
+  document.getElementById('openOrderBtn').addEventListener('click', openOrderModal);
+}
+
+// expose some functions for inline handlers
+window.openOrderModal = openOrderModal;
+window.openProductModal = openProductModal;
+window.quickOrder = quickOrder;
+window.openWhatsApp = openWhatsApp;
+
+init();
+</script>
+</body>
+</html>

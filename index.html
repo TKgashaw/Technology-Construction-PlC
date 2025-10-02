@@ -235,7 +235,7 @@ Features included:
           <div style="height:12px"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <a class="social-link" href="https://www.facebook.com/share/1Azd18kZ5L/" aria-label="Facebook">Facebook</a>
-            <a class="social-link" href="#" aria-label="Instagram">Instagram</a>
+            <a class="social-link" href="https://t.me/technologyconstructionplc" aria-label="Instagram">Instagram</a>
             <a class="social-link" href="https://www.linkedin.com/company/technology-construction-plc/" aria-label="LinkedIn">LinkedIn</a>
           </div>
         </div>
@@ -244,7 +244,7 @@ Features included:
       <div style="flex:1;min-width:320px">
         <div class="card">
           <h4>Send a message</h4>
-          <form id="contactForm" action="https://formspree.io/f/mblavqvz" method="POST">
+          <form id="contactForm" action="https://formspree.io/f/mzzjgjak" method="POST">
             <label>
               <div style="font-weight:700">Name</div>
               <input name="name" required style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid var(--gray-200)" />
@@ -277,7 +277,7 @@ Features included:
     <div class="muted">Technology Construction PlC</div>
     <div style="display:flex;gap:8px;align-items:center">
       <a class="social-link" href="https://www.facebook.com/share/1Azd18kZ5L/">Facebook</a>
-      <a class="social-link" href="#">Instagram</a>
+      <a class="social-link" href="https://t.me/technologyconstructionplc">Telegram</a>
       <a class="social-link" href="https://www.linkedin.com/company/technology-construction-plc/">LinkedIn</a>
     </div>
   </div>
@@ -303,7 +303,7 @@ Features included:
    =================== */
 const CONTACT_EMAIL = 'technologyconstructionplc@gmail.com';
 const WHATSAPP_NUMBER = '+251975822222'; // include country code
-const FORMSPREE_ID = 'https://formspree.io/f/mblavqvz'; // replace with your Formspree form ID for contact/order POSTs
+const FORMSPREE_ID = 'https://formspree.io/f/mzzjgjak'; // replace with your Formspree form ID for contact/order POSTs
 
 // sample product data (replace image filenames with your images in assets/images/)
 const PRODUCTS = [
@@ -480,7 +480,7 @@ function submitOrder(){
   if(!form) return;
   const data = new FormData(form);
   // Send to Formspree (replace your FORMSPREE_ID above)
-  fetch(`https://formspree.io/f/mblavqvz ${FORMSPREE_ID}`,{
+  fetch(`https://formspree.io/f/mzzjgjak ${FORMSPREE_ID}`,{
     method:'POST',headers: {'Accept':'application/json'},body:data
   }).then(res=>{
     if(res.ok){ alert('Order submitted successfully. We will contact you soon.'); closeModal(); } else { alert('Failed to submit order. Please try WhatsApp at the bottom-right.'); }
@@ -528,3 +528,4 @@ init();
 </script>
 </body>
 </html>
+
